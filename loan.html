@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- Bootstrap CSS Link -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <style>
+        .container {
+            height: 90vh;
+            width: 40vw;
+            border: 1px solid rgb(232, 232, 232);
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+
+        .heading {
+            margin: 20px;
+            font-size: 2.5rem;
+        }
+
+        .form-group {
+            margin-left: 20px;
+        }
+
+        .btn{
+            margin-left: 30px;
+        }
+
+        .container1 {
+            margin-left: -10px;
+        }
+
+        #total {
+            margin-top: 20px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container my-5">
+        <div class="heading">Loan Form</div>
+
+        <form id="myForm" onsubmit="return validateForm()">
+
+            <div class="form-group mt-3">
+                <label for="FullName">Full Name</label>
+                <input type="text" class="form-control" id="FullName" placeholder="Full Name" style="width: 300px">
+                <span id="nameError" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <label for="Email">Email address</label>
+                <input type="email" class="form-control" id="Email" aria-describedby="emailHelp"
+                    placeholder="Enter email" style="width: 300px">
+                <span id="emailError" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <label for="Password">Password</label>
+                <input type="password" class="form-control" id="Password" placeholder="Password" style="width: 300px">
+                <span id="passwordError" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <label for="PAN">PAN</label>
+                <input type="text" class="form-control" id="PAN" placeholder="PAN" style="width: 300px">
+                <span id="panError" class="text-danger"></span>
+            </div>
+
+            <div class="container1 mt-3">
+                <div class="form-group row">
+                    <div class="col-md-4">
+                        <label for="amount">Loan Amount</label>
+                        <input type="number" class="form-control" id="amount" placeholder="Loan Amount"
+                            style="width: 150px" onchange="Calculate()" maxlength="9" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="rate">Interest Rate</label>
+                        <input type="number" class="form-control" id="rate" placeholder="Interest Rate"
+                            style="width: 150px" onchange="Calculate()">
+                    </div>
+
+
+                    <div class="col-md-4">
+                        <label for="months">Months To Pay</label>
+                        <input type="number" class="form-control" id="months" onchange="Calculate()"
+                            placeholder="Months To Pay" style="width: 150px">
+                    </div>
+
+                    <h2 id="total">Total:</h2>
+                </div>
+
+                <button type="submit" class="btn btn-dark my-2" onclick="generateOtp()">Submit</button>
+        </form>
+
+    </div>
+
+    <script>
+
+        function validateFullName(fullName) {
+            const namePattern = /^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/;
+            if (!namePattern.test(fullName) || fullName.length < 2 || fullName.length > 50) {
+                return 'Please enter a valid full name. It should contain only letters and spaces, and should not start or end with a space.';
+            }
+            localStorage.setItem("fullName", fullName);
+            return '';
+        }
+
+        function validateEmail(email) {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                return 'Please enter a valid email address.';
+            }
+            localStorage.setItem("email", email);
+            return '';
+        }
+
+        function validatePassword(password) {
+            if (password.length < 6) {
+                return 'Password must be at least 6 characters long.';
+            }
+            localStorage.setItem("password", password);
+            return '';
+
+        }
+
+        function validatePAN(pan) {
+            const panPattern = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+            if (!panPattern.test(pan)) {
+                return 'Please enter a valid PAN number.';
+            }
+            return '';
+        }
+
+        function validateForm() {
+            const fullName = document.getElementById('FullName').value;
+            const email = document.getElementById('Email').value;
+            const password = document.getElementById('Password').value;
+            const pan = document.getElementById('PAN').value;
+
+            const nameError = document.getElementById('nameError');
+            const emailError = document.getElementById('emailError');
+            const passwordError = document.getElementById('passwordError');
+            const panError = document.getElementById('panError');
+
+            nameError.textContent = validateFullName(fullName);
+            emailError.textContent = validateEmail(email);
+            passwordError.textContent = validatePassword(password);
+            panError.textContent = validatePAN(pan);
+
+            if (nameError.textContent) {
+
+                return false;
+            }
+
+            if (emailError.textContent) {
+
+                return false;
+            }
+
+            if (passwordError.textContent) {
+
+                return false;
+            }
+
+            if (panError.textContent) {
+
+                return false;
+            }
+
+            window.location.href = "confirm.html";
+            return false;
+        }
+
+        document.getElementById('FullName').addEventListener('blur', function () {
+            document.getElementById('nameError').textContent = validateFullName(this.value);
+        });
+
+        document.getElementById('Email').addEventListener('blur', function () {
+            document.getElementById('emailError').textContent = validateEmail(this.value);
+        });
+
+        document.getElementById('Password').addEventListener('blur', function () {
+            document.getElementById('passwordError').textContent = validatePassword(this.value);
+        });
+
+        document.getElementById('PAN').addEventListener('blur', function () {
+            document.getElementById('panError').textContent = validatePAN(this.value);
+        });
+
+        function Calculate() {
+
+            const amount = document.querySelector("#amount").value;
+
+            const rate = document.querySelector("#rate").value;
+
+            const months = document.querySelector("#months").value;
+
+            const interest = (amount * (rate * 0.01)) / months;
+
+            const total = ((amount / months) + interest).toFixed(2);
+
+            document.querySelector("#total")
+                .innerHTML = "EMI : (₹)" + total;
+
+        }
+
+        let chances = 0;
+
+        function generateOtp() {
+            var mainOtp = Math.round(Math.random() * 2000) + 2000;
+            localStorage.setItem("mainOtp", mainOtp);
+            
+        }
+
+
+    </script>
+
+
+    <!-- Bootstrap Script -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+
+
+
+</body>
+
+</html>
